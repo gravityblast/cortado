@@ -1,0 +1,11 @@
+info: http://github.com/pilu/cortado
+
+[development]
+base_url: http://localhost:7000
+
+[test]
+base_url: http://test.local
+
+[production]
+base_url: http://localhost:7000
+
