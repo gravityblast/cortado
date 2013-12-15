@@ -8,8 +8,9 @@ import (
 
 func IndexHandler(w traffic.ResponseWriter, r *traffic.Request) {
   body := map[string]string {
-    "version": VERSION,
-    "info": settings["info"],
+    "version":  VERSION,
+    "base_url": settings["base_url"],
+    "info":     settings["info"],
   }
 
   w.WriteJSON(body)
