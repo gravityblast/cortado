@@ -28,7 +28,7 @@ func initSettings() {
 
 func initRedis() {
   var err error
-  db, err = redis.Dial("tcp", ":6379")
+  db, err = redis.Dial("tcp", traffic.GetVar("redis_url").(string))
   if err != nil {
     log.Fatal(err)
   }

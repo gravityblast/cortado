@@ -2,10 +2,13 @@ info: http://github.com/pilu/cortado
 
 [development]
 base_url: http://localhost:7000
+redis_url: localhost:6379
 
 [test]
 base_url: http://test.local
+redis_url: localhost:6379
 
 [production]
 base_url: http://localhost:7000
+redis_url: localhost:6379
 
