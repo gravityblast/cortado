@@ -23,13 +23,13 @@ func (i InvalidUrl) Error() string {
 }
 
 
-func Shorten(url string) (string, bool, error) {
+func Shorten(db redis.Conn, url string) (string, bool, error) {
   if !validUrl(url) {
     return "", false, InvalidUrl{ url }
   }
 
   hash := urlHash(url)
-  shorty, err := FindByHash(hash)
+  shorty, err := FindByHash(db, hash)
 
   if err != nil {
     return "", false, err
@@ -60,11 +60,11 @@ func Shorten(url string) (string, bool, error) {
   return shorty, false, nil
 }
 
-func IncrementClicks(shorty string) {
+func IncrementClicks(db redis.Conn, shorty string) {
   db.Do("ZINCRBY", "clicks", 1, shorty)
 }
 
-func Clicks(shorty string) int {
+func Clicks(db redis.Conn, shorty string) int {
   count, err := redis.Int(db.Do("ZSCORE", "clicks", shorty))
 
   if err != nil {
@@ -74,7 +74,7 @@ func Clicks(shorty string) int {
   return count
 }
 
-func FindByShorty(shorty string) (string, error) {
+func FindByShorty(db redis.Conn, shorty string) (string, error) {
   key := fmt.Sprintf("shorties:%s", shorty)
   url, err := db.Do("GET", key)
 
@@ -89,7 +89,7 @@ func FindByShorty(shorty string) (string, error) {
   return fmt.Sprintf("%s", url), nil
 }
 
-func FindByHash(hash string) (string, error) {
+func FindByHash(db redis.Conn, hash string) (string, error) {
   key := fmt.Sprintf("urls:%s", hash)
   url, err := db.Do("GET", key)
 

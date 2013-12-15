@@ -17,10 +17,13 @@ func IndexHandler(w traffic.ResponseWriter, r *traffic.Request) {
 }
 
 func CreateHandler(w traffic.ResponseWriter, r *traffic.Request) {
+  db := dbPool.Get()
+  defer db.Close()
+
   r.ParseForm()
   url := r.PostForm.Get("url")
 
-  shorty, found, err := Shorten(url)
+  shorty, found, err := Shorten(db, url)
 
   if err != nil {
     HandleError(err, w)
@@ -45,26 +48,32 @@ func CreateHandler(w traffic.ResponseWriter, r *traffic.Request) {
 }
 
 func RedirectHandler(w traffic.ResponseWriter, r *traffic.Request) {
+  db := dbPool.Get()
+  defer db.Close()
+
   shorty := r.Param("shorty")
-  url, err := FindByShorty(shorty)
+  url, err := FindByShorty(db, shorty)
   if err != nil {
     HandleError(err, w)
     return
   }
 
-  IncrementClicks(shorty)
+  IncrementClicks(db, shorty)
   http.Redirect(w, r.Request, url, http.StatusMovedPermanently)
 }
 
 func InfoHandler(w traffic.ResponseWriter, r *traffic.Request) {
+  db := dbPool.Get()
+  defer db.Close()
+
   shorty := r.Param("shorty")
-  url, err := FindByShorty(shorty)
+  url, err := FindByShorty(db, shorty)
   if err != nil {
     HandleError(err, w)
     return
   }
 
-  clicks := fmt.Sprintf("%d", Clicks(shorty))
+  clicks := fmt.Sprintf("%d", Clicks(db, shorty))
 
   body := map[string]string {
     "long_url":   url,
