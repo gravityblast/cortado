@@ -14,7 +14,20 @@ func (s ShortyNotFound) Error() string {
   return fmt.Sprintf("shorty not found: `%s`", s.shorty)
 }
 
+type InvalidUrl struct {
+  url string
+}
+
+func (i InvalidUrl) Error() string {
+  return fmt.Sprintf("invalid url: `%s`", i.url)
+}
+
+
 func Shorten(url string) (string, bool, error) {
+  if !validUrl(url) {
+    return "", false, InvalidUrl{ url }
+  }
+
   hash := urlHash(url)
   shorty, err := FindByHash(hash)
 

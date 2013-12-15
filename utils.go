@@ -4,11 +4,18 @@ import (
   "io"
   "log"
   "fmt"
+  "regexp"
   "net/url"
   "net/http"
   "crypto/sha1"
   "github.com/pilu/traffic"
 )
+
+var validUrlRegexp = regexp.MustCompile(`^[a-zA-Z0-9]+://([^?/#\.\s]+)\.([^?/#\.\s]+)`)
+
+func validUrl(url string) bool {
+  return validUrlRegexp.MatchString(url)
+}
 
 func getConfig(key string) string {
   if value, ok := traffic.GetVar(key).(string); ok {
@@ -56,6 +63,8 @@ func Error(message string, w traffic.ResponseWriter, status int) {
 func HandleError(err error, w traffic.ResponseWriter) {
   if e, ok := err.(ShortyNotFound); ok {
     Error(e.Error(), w, http.StatusNotFound)
+  } else if e, ok := err.(InvalidUrl); ok {
+    Error(e.Error(), w, http.StatusBadRequest)
   } else {
     log.Println(err.Error())
     Error("internal server error", w, http.StatusInternalServerError)
