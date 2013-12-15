@@ -48,13 +48,11 @@ func Shorten(url string) (string, bool, error) {
 }
 
 func IncrementClicks(shorty string) {
-  key := fmt.Sprintf("shorties:%s:clicks", shorty)
-  db.Do("INCR", key)
+  db.Do("ZINCRBY", "clicks", 1, shorty)
 }
 
 func Clicks(shorty string) int {
-  key := fmt.Sprintf("shorties:%s:clicks", shorty)
-  count, err := redis.Int(db.Do("GET", key))
+  count, err := redis.Int(db.Do("ZSCORE", "clicks", shorty))
 
   if err != nil {
     return 0
