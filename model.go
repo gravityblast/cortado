@@ -23,25 +23,25 @@ func (i InvalidUrl) Error() string {
 }
 
 
-func Shorten(db redis.Conn, url string) (string, bool, error) {
+func Shorten(db redis.Conn, url string) (string, error) {
   if !validUrl(url) {
-    return "", false, InvalidUrl{ url }
+    return "", InvalidUrl{ url }
   }
 
   hash := urlHash(url)
   shorty, err := FindByHash(db, hash)
 
   if err != nil {
-    return "", false, err
+    return "", err
   }
 
   if shorty != "" {
-    return shorty, true, nil
+    return shorty, nil
   }
 
   id, err := redis.Int(db.Do("INCR", "next_id"))
   if err != nil {
-    return "", false, err
+    return "", err
   }
 
   shorty    =  base62.Encode(int(id))
@@ -54,10 +54,10 @@ func Shorten(db redis.Conn, url string) (string, bool, error) {
   _, err = db.Do("EXEC")
 
   if err != nil {
-    return "", false, err
+    return "", err
   }
 
-  return shorty, false, nil
+  return shorty, nil
 }
 
 func IncrementClicks(db redis.Conn, shorty string) {

@@ -23,7 +23,7 @@ func CreateHandler(w traffic.ResponseWriter, r *traffic.Request) {
   r.ParseForm()
   url := r.PostForm.Get("url")
 
-  shorty, found, err := Shorten(db, url)
+  shorty, err := Shorten(db, url)
 
   if err != nil {
     HandleError(err, w)
@@ -39,11 +39,7 @@ func CreateHandler(w traffic.ResponseWriter, r *traffic.Request) {
   }
 
   w.Header().Set("Location", shortUrl)
-  if found {
-    w.WriteHeader(http.StatusFound)
-  } else {
-    w.WriteHeader(http.StatusCreated)
-  }
+  w.WriteHeader(http.StatusCreated)
   w.WriteJSON(body)
 }
 
