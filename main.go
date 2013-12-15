@@ -28,9 +28,17 @@ func initSettings() {
 
 func initRedis() {
   var err error
-  db, err = redis.Dial("tcp", traffic.GetVar("redis_url").(string))
+  host, password := redisSettings()
+  db, err = redis.Dial("tcp", host)
+
   if err != nil {
     log.Fatal(err)
+  }
+
+  if len(password) > 0 {
+    if _, err := db.Do("AUTH", password); err != nil {
+      log.Fatal(err)
+    }
   }
 }
 

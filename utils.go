@@ -4,6 +4,7 @@ import (
   "io"
   "log"
   "fmt"
+  "net/url"
   "net/http"
   "crypto/sha1"
   "github.com/pilu/traffic"
@@ -15,6 +16,20 @@ func getConfig(key string) string {
   }
 
   return ""
+}
+
+func redisSettings() (string, string) {
+  redisUrl      := getConfig("redis_url")
+  redisInfo, _  := url.Parse(redisUrl)
+  host          := redisInfo.Host
+
+  var password string
+
+  if redisInfo.User != nil {
+    password, _  = redisInfo.User.Password()
+  }
+
+  return host, password
 }
 
 func urlHash(url string) string {
