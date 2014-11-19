@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/pilu/traffic"
 	"net/http"
+
+	"github.com/pilu/traffic"
 )
 
 func IndexHandler(w traffic.ResponseWriter, r *traffic.Request) {
 	body := map[string]string{
 		"version":  VERSION,
 		"base_url": settings["base_url"],
-		"info":     settings["info"],
 	}
 
 	w.WriteJSON(body)

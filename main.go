@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/garyburd/redigo/redis"
-	"github.com/pilu/traffic"
 	"log"
 	"time"
+
+	"github.com/garyburd/redigo/redis"
+	"github.com/pilu/traffic"
 )
 
 const VERSION = "0.1.0"
@@ -23,8 +24,7 @@ func init() {
 
 func initSettings() {
 	settings = make(map[string]string)
-	settings["base_url"] = getConfig("base_url")
-	settings["info"] = getConfig("info")
+	settings["base_url"] = getConfig("BASE_URL")
 }
 
 func initRedis() {

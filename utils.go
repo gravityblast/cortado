@@ -3,12 +3,14 @@ package main
 import (
 	"crypto/sha1"
 	"fmt"
-	"github.com/pilu/traffic"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
+
+	"github.com/pilu/traffic"
 )
 
 var validUrlRegexp = regexp.MustCompile(`^[a-zA-Z0-9]+://([^?/#\.\s]+)\.([^?/#\.\s]+)`)
@@ -18,15 +20,16 @@ func validUrl(url string) bool {
 }
 
 func getConfig(key string) string {
-	if value, ok := traffic.GetVar(key).(string); ok {
-		return value
+	value := os.Getenv(key)
+	if value == "" {
+		log.Fatalf("You need to set %s the env variable", key)
 	}
 
-	return ""
+	return value
 }
 
 func redisSettings() (string, string) {
-	redisUrl := getConfig("redis_url")
+	redisUrl := getConfig("REDIS_URL")
 	redisInfo, _ := url.Parse(redisUrl)
 	host := redisInfo.Host
 
