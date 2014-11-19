@@ -2,8 +2,6 @@
 
 A URL shortener written in Go and base on the [Traffic Web Framework](https://github.com/pilu/traffic).
 
-<http://♡♡♡.ws>
-
 ```bash
 $ curl -XPOST -i http://localhost:7000/ -d "url=http://gravityblast.com"
 HTTP/1.1 201 Created
